@@ -2,7 +2,7 @@
 
 Some Semgrep rules I developed during penetration testing.
 
-These rules were developed quickly during my everyday activities when I could not find what I needed in the official rules repository. Consequently surely they could be improved, but they do their job.
+These rules were developed quickly during my everyday activities when I could not find what I needed in the official rules repository. Consequently surely they can be improved in speed and coverage, but they do their job.
 
 Most of them have also a "potential" version that adds more results but that increase the number of false positives. Usually, I prefer to review more false positives than to miss a finding, but depends on the specific assessment and on the number of them.
 
