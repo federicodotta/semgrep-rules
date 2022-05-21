@@ -1,0 +1,25 @@
+rules:
+- id: sql-injection-php-potential-apps3c
+  languages:
+    - php
+  severity: INFO
+  message: >-
+      Detected a string starting with a SQL operation with a concatenated 
+      value. This could lead to SQL injection if variables in the SQL 
+      statement are not properly sanitized.
+  patterns:  
+
+      - pattern-either:
+
+        - pattern: $VAR = $SELECT;
+        - pattern: $VAR = $SELECT . $AAAA;
+        #- pattern: $SELECT;
+        - pattern: $SELECT . $AAAA;
+        - pattern: $SELECT . $AAAA . $BBBB;
+        - pattern: $SELECT . $AAAA . $BBBB . $CCCC;
+        #- pattern: $FUNC($SELECT);
+
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})      
+

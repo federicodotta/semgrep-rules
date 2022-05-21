@@ -1,0 +1,179 @@
+rules:
+- id: sql-injection-php-apps3c
+  languages:
+    - php
+  severity: WARNING
+  message: >-
+      Detected a formatted string starting with a SQL operation with a concatenated 
+      value that came from a function argument. This could lead to SQL
+      injection if variables in the SQL statement are not properly sanitized.
+  pattern-either:  
+
+    - patterns:
+
+      - pattern-either:
+          - pattern-inside: |
+              function $FUNC(...,$PAR,...) {
+                ...
+              }
+          - pattern-inside: |
+              function $FUNC(...,$PAR = $PVAL,...) {
+                ...
+              }         
+
+      - pattern-either:
+
+        # SELECT WITH PARAM AS ARGUMENT
+        - pattern: $SELECT . $PRE . <... $PAR ...> . $POST;
+        - pattern: $SELECT . <... $PAR ...> . $POST;
+        - pattern: $SELECT . $PRE . <... $PAR ...>;
+        - pattern: $SELECT . <... $PAR ...>;
+
+        # SELECT WITH ARGUMENT COPIED FROM PARAM (1 time, if >1 times it does not work)
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $SELECT . $PRE . <... $COPY ...> . $POST;
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $SELECT . <... $COPY ...> . $POST;
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $SELECT . $PRE . <... $COPY ...>;
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $SELECT . <... $COPY ...>;
+
+        # SELECT WITH ARGUMENT COPIED FROM FIELD OF PARAM WITH -> (1 time, if >1 times it does not work)
+        - pattern: |
+              $COPY = $PAR->$ARGUM;
+              ...
+              $SELECT . $PRE . <... $COPY ...> . $POST;
+        - pattern: |
+              $COPY = $PAR->$ARGUM;
+              ...
+              $SELECT . <... $COPY ...> . $POST;
+        - pattern: |
+              $COPY = $PAR->$ARGUM;
+              ...
+              $SELECT . $PRE . <... $COPY ...>;
+        - pattern: |
+              $COPY = $PAR->$ARGUM;
+              ...
+              $SELECT . <... $COPY ...>;
+
+        # SELECT WITH ARGUMENT COPIED FROM FIELD OF PARAM WITH . (1 time, if >1 times it does not work)
+        - pattern: |
+              $COPY = $PAR.$ARGUM;
+              ...
+              $SELECT . $PRE . <... $COPY ...> . $POST;
+        - pattern: |
+              $COPY = $PAR.$ARGUM;
+              ...
+              $SELECT . <... $COPY ...> . $POST;
+        - pattern: |
+              $COPY = $PAR.$ARGUM;
+              ...
+              $SELECT . $PRE . <... $COPY ...>;
+        - pattern: |
+              $COPY = $PAR.$ARGUM;
+              ...
+              $SELECT . <... $COPY ...>;  
+
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})
+
+    - patterns:
+
+      - pattern-either:
+        - pattern-inside: |
+            function $FUNC(...,$PAR,...) {
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...,$PAR = $PVAL,...) {
+              ...
+            }   
+      - pattern: $QUERY = <... $PAR ...>;
+      - pattern: $QUERY = $SELECT;
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})
+
+    - patterns:
+
+      - pattern-either:
+        - pattern-inside: |
+            function $FUNC(...,$PAR,...) {
+              ...
+              $COPY = $PAR;
+              ...            
+              $QUERY = $SELECT;
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...,$PAR = $PVAL,...) {
+              ...
+              $COPY = $PAR;
+              ...            
+              $QUERY = $SELECT;
+              ...
+            }         
+      - pattern: |
+          $COPY = $PAR;
+          ...
+          $QUERY = <... $COPY ...>;
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})
+
+
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            function $FUNC(...,$PAR,...) {
+              ...
+              $QUERYMETHOD($SELECT);
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...,$PAR = $PVAL,...) {
+              ...
+              $QUERYMETHOD($SELECT);
+              ...
+            }        
+      - pattern: $QUERYMETHOD(<... $PAR ...>);
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})
+
+
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            function $FUNC(...,$PAR,...) {
+              ...
+              $COPY = $PAR;
+              ...            
+              $QUERYMETHOD($SELECT);
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...,$PAR = $PVAL,...) {
+              ...
+              $COPY = $PAR;
+              ...            
+              $QUERYMETHOD($SELECT);
+              ...
+            }        
+      - pattern: |
+          $COPY = $PAR;
+          ...
+          $QUERYMETHOD(<... $COPY ...>);
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})                 
