@@ -6,6 +6,16 @@ These rules were developed quickly during my everyday activities when I could no
 
 Most of them have also a "potential" version that adds more results but that increase the number of false positives. Usually, I prefer to review more false positives than to miss a finding, but depends on the specific assessment and on the number of them.
 
+# Setup and usage instructions
+
+1. Install [Semgrep](https://semgrep.dev/docs/getting-started/). 
+2. Clone this github repo.
+3. To use these rules, run:
+
+```
+semgrep --config PATH/TO/RULES_DIR/OR/RULE_FILE PATH/TO/FILE/FOR/SCANNING
+```
+
 ## PHP
 
 ### Language
