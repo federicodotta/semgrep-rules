@@ -1,0 +1,35 @@
+rules:
+- id: android-apps3c
+  languages:
+    - java
+  severity: WARNING
+  message: >-
+      Detect portions of the Android Java code that make use of WebView, in order to check for 
+      insecure configurations. More details on vulnerable confiurations related to WebView can be 
+      found in OWASP "Android Platform APIs" document:
+      https://github.com/OWASP/owasp-mstg/blob/master/Document/0x05h-Testing-Platform-Interaction.md
+  pattern-either:  
+
+      - pattern: $OBJ.addJavascriptInterface(...)
+      - pattern: addJavascriptInterface(...)
+      - pattern: |
+          @JavascriptInterface
+          $RETURNTYPE $METHOD(...) { ... }
+      - pattern: $OBJ.setJavaScriptEnabled(true)
+      - pattern: setJavaScriptEnabled(true)
+      - pattern: $WEBVIEW.loadUrl(...)
+      - pattern: loadUrl(...)
+
+      - pattern: $WEBVIEW.setAllowContentAccess(...)
+      - pattern: setAllowContentAccess(...)
+
+      - pattern: $WEBVIEW.setAllowFileAccess(...)
+      - pattern: setAllowFileAccess(...)
+
+      - pattern: $WEBVIEW.setAllowFileAccessFromFileURLs(...)
+      - pattern: setAllowFileAccessFromFileURLs(...)
+
+      - pattern: $WEBVIEW.setAllowUniversalAccessFromFileURLs(...)
+      - pattern: setAllowUniversalAccessFromFileURLs(...)
+
+    

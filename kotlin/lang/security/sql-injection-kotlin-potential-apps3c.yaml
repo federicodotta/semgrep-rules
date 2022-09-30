@@ -1,0 +1,39 @@
+rules:
+- id: sql-injection-kotlin-potential-apps3c
+  languages:
+    - kotlin
+  severity: INFO
+  message: >-
+      Detected a string starting with a SQL operation with a concatenated 
+      value. This could lead to SQL injection if variables in the SQL 
+      statement are not properly sanitized.
+  patterns:  
+
+      - pattern-either:
+
+        - pattern: $VAR = $SELECT
+        - pattern: $VAR = $SELECT.plus($AAAA)
+        - pattern: $VAR = $STRINGBUILDER.append($SELECT).append($AAAA)
+        
+        #- pattern: $SELECT # Too many matches
+        
+        - pattern: $SELECT.$FUNCT()
+        
+        - pattern: $SELECT + $AAAA
+        - pattern: $SELECT + $AAAA + $BBBB
+        - pattern: $SELECT + $AAAA + $BBBB + $CCCC
+
+        - pattern: $SELECT.plus($AAAA)
+        - pattern: $SELECT.plus($AAAA).plus($BBBB)
+        - pattern: $SELECT.plus($AAAA).plus($BBBB).plus($CCCC)
+
+
+        - pattern: $STRINGBUILDER.append($SELECT).append($AAAA)
+        - pattern: $STRINGBUILDER.append($SELECT).append($AAAA).append($BBBB)
+        - pattern: $STRINGBUILDER.append($SELECT).append($AAAA).append($BBBB).append($CCCC)
+
+        - pattern: $FUNC($SELECT)
+
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+       

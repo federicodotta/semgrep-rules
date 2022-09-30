@@ -20,3 +20,20 @@ Most of them have also a "potential" version that adds more results but that inc
 * **sql-injection-yii-framework-apps3c.yaml** (it may works also on other frameworks that uses similar query structures, e.g. "select(...)")
 * **sql-injection-yii-framework-potential-apps3c.yaml** (it may works also on other frameworks that uses similar query structures", e.g. "select(...)")
 * **xss-yii-framework-potential-apps3c.yaml**
+
+## Kotlin
+
+### Language
+
+* **sql-injection-kotlin-apps3c.yaml**
+* **sql-injection-kotlin-potential-apps3c.yaml**
+
+### Android WebView
+
+* **android-webview-kotlin-apps3c.yaml**
+
+## Java
+
+### Android WebView
+
+* **android-webview-java-apps3c.yaml**

@@ -1,0 +1,168 @@
+rules:
+- id: sql-injection-kotlin-apps3c
+  languages:
+    - kotlin
+  severity: WARNING
+  message: >-
+      Detected a formatted string starting with a SQL operation with a concatenated 
+      value that came from a function argument. This could lead to SQL
+      injection if variables in the SQL statement are not properly sanitized.
+  pattern-either:  
+
+    - patterns:
+
+
+      - pattern-inside: |
+          fun $FUNC(...,$PAR:$TYPE,...) {
+            ...
+          }
+       
+
+      - pattern-either:
+
+        # SELECT WITH PARAM AS ARGUMENT (+ way)
+        - pattern: $SELECT + $PRE + <... $PAR ...> + $POST
+        - pattern: $SELECT + <... $PAR ...> + $POST
+        - pattern: $SELECT + $PRE + <... $PAR ...>
+        - pattern: $SELECT + <... $PAR ...>
+
+        # SELECT WITH PARAM AS ARGUMENT (plus way)
+        - pattern: $SELECT.plus($PRE).plus(<... $PAR ...>).plus($POST)
+        - pattern: $SELECT.plus(<... $PAR ...>).plus($POST)
+        - pattern: $SELECT.plus($PRE).plus(<... $PAR ...>)
+        - pattern: $SELECT.plus(<... $PAR ...>)
+
+        # SELECT WITH PARAM AS ARGUMENT (StringBuilder way)
+        - pattern: $STRINGBUILDER.append($SELECT).append($PRE).append(<... $PAR ...>).append($POST)
+        - pattern: $STRINGBUILDER.append($SELECT).append(<... $PAR ...>).append($POST)
+        - pattern: $STRINGBUILDER.append($SELECT).append($PRE).append(<... $PAR ...>)
+        - pattern: $STRINGBUILDER.append($SELECT).append(<... $PAR ...>)
+
+        # SELECT WITH ARGUMENT COPIED FROM PARAM (1 time, if >1 times it does not work, + way)
+        - pattern: |
+              $COPY = $PAR
+              ...
+              $SELECT + $PRE + <... $COPY ...> + $POST
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $SELECT + <... $COPY ...> + $POST
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $SELECT + $PRE + <... $COPY ...>
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $SELECT + <... $COPY ...>
+
+        # SELECT WITH ARGUMENT COPIED FROM PARAM (1 time, if >1 times it does not work, plus way)
+        - pattern: |
+              $COPY = $PAR
+              ...
+              $SELECT.plus($PRE).plus(<... $COPY ...>).plus($POST)
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $SELECT.plus(<... $COPY ...>).plus($POST)
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $SELECT.plus($PRE).plus(<... $COPY ...>)
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $SELECT.plus(<... $COPY ...>)
+
+        # SELECT WITH ARGUMENT COPIED FROM PARAM (1 time, if >1 times it does not work, StringBuilder way)
+        - pattern: |
+              $COPY = $PAR
+              ...
+              $STRINGBUILDER.append($SELECT).append($PRE).append(<... $COPY ...>).append($POST)
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $STRINGBUILDER.append($SELECT).append(<... $COPY ...>).append($POST)
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $STRINGBUILDER.append($SELECT).append($PRE).append(<... $COPY ...>)
+        - pattern: |
+              $COPY = $PAR;
+              ...
+              $STRINGBUILDER.append($SELECT).append(<... $COPY ...>)               
+
+
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+  
+
+    - patterns:
+
+      - pattern-inside: |
+          fun $FUNC(...,$PAR:$TYPE,...) {
+            ...
+          }
+ 
+      - pattern: $QUERY = <... $PAR ...>
+      - pattern: $QUERY = $SELECT
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+    
+
+    - patterns:
+
+
+      - pattern-inside: |
+          fun $FUNC(...,$PAR:$TYPE,...) {
+            ...
+            $COPY = $PAR
+            ...            
+            $QUERY = $SELECT
+            ...
+          }
+        
+      - pattern: |
+          $COPY = $PAR
+          ...
+          $QUERY = <... $COPY ...>
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+      
+
+    - patterns:
+
+      - pattern-inside: |
+          fun $FUNC(...,$PAR:$TYPE,...) {
+            ...
+            $QUERYMETHOD($SELECT)
+            ...
+          }
+      
+      - pattern: $QUERYMETHOD(<... $PAR ...>)
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+ 
+
+
+    - patterns:
+      
+      - pattern-inside: |
+          fun $FUNC(...,$PAR:$TYPE,...) {
+            ...
+            $COPY = $PAR
+            ...            
+            $QUERYMETHOD($SELECT)
+            ...
+          }
+        
+      - pattern: |
+          $COPY = $PAR
+          ...
+          $QUERYMETHOD(<... $COPY ...>)
+      - metavariable-regex:
+          metavariable: $SELECT
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+ 
+
+    #TODO Lambda - Seems to be not supported for the moment in Kotlin (beta maturity level)
+    

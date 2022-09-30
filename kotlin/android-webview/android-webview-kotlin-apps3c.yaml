@@ -1,0 +1,47 @@
+rules:
+- id: android-webview-kotlin-apps3c
+  languages:
+    - kotlin
+  severity: WARNING
+  message: >-
+      Detect portions of the Android Kotlin code that make use of WebView, in order to check for 
+      insecure configurations. More details on vulnerable confiurations related to WebView can be 
+      found in OWASP "Android Platform APIs" document:
+      https://github.com/OWASP/owasp-mstg/blob/master/Document/0x05h-Testing-Platform-Interaction.md
+  pattern-either:  
+
+      - pattern: $OBJ.addJavascriptInterface(...)
+      - pattern: addJavascriptInterface(...)
+      - pattern: |
+          @JavascriptInterface
+          fun $METHOD(...) { ... }
+      - pattern: $OBJ.setJavaScriptEnabled(...)
+      - pattern: setJavaScriptEnabled(...)
+      - pattern: javaScriptEnabled =  ...
+      - pattern: $OBJ.javaScriptEnabled = ...
+
+      - pattern: $WEBVIEW.loadUrl(...)
+      - pattern: loadUrl(...)
+
+      - pattern: $WEBVIEW.setAllowContentAccess(...)
+      - pattern: setAllowContentAccess(...)
+      - pattern: allowContentAccess = ...
+      - pattern: $OBJ.allowContentAccess = ...
+
+      - pattern: $WEBVIEW.setAllowFileAccess(...)
+      - pattern: setAllowFileAccess(...)
+      - pattern: allowFileAccess = ...
+      - pattern: $OBJ.allowFileAccess = ...
+
+      - pattern: $WEBVIEW.setAllowFileAccessFromFileURLs(...)
+      - pattern: setAllowFileAccessFromFileURLs(...)
+      - pattern: allowFileAccessFromFileURLs = ...
+      - pattern: $OBJ.allowFileAccessFromFileURLs = ...
+
+      - pattern: $WEBVIEW.setAllowUniversalAccessFromFileURLs(...)
+      - pattern: setAllowUniversalAccessFromFileURLs(...)
+      - pattern: allowUniversalAccessFromFileURLs = ...
+      - pattern: $OBJ.allowUniversalAccessFromFileURLs = ...
+
+
+
