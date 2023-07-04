@@ -21,5 +21,5 @@ rules:
 
       - metavariable-regex:
           metavariable: $SELECT
-          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})      
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+      
 
