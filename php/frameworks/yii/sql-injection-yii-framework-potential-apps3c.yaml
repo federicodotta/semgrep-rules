@@ -24,7 +24,7 @@ rules:
 
       - metavariable-regex:
           metavariable: $SELECT
-          regex: (^(select|insert|update|delete|selectDistinct|from|where|andWhere|orWhere|join|leftJoin|rightJoin|crossJoin|naturalJoin|group|having|order|orderBy|limit|offset|union)$)
+          regex: (?is)^["']+\s*(select |insert |update |delete |selectDistinct |from |where |andWhere |orWhere |join |leftJoin |rightJoin |crossJoin |naturalJoin |group |having |order |orderBy |limit |offset |union ).*["']+
 
 
     - patterns:
@@ -42,7 +42,7 @@ rules:
 
       - metavariable-regex:
           metavariable: $SELECT
-          regex: (^(select|insert|update|delete|selectDistinct|from|where|andWhere|orWhere|join|leftJoin|rightJoin|crossJoin|naturalJoin|group|having|order|orderBy|limit|offset|union)$)    
+          regex: (?is)^["']+\s*(select |insert |update |delete |selectDistinct |from |where |andWhere |orWhere |join |leftJoin |rightJoin |crossJoin |naturalJoin |group |having |order |orderBy |limit |offset |union ).*["']+    
 
       - metavariable-regex:
           metavariable: $FORMATSTRING
