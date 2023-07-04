@@ -85,7 +85,7 @@ rules:
 
       - metavariable-regex:
           metavariable: $SELECT
-          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+
 
     - patterns:
 
@@ -102,7 +102,7 @@ rules:
       - pattern: $QUERY = $SELECT;
       - metavariable-regex:
           metavariable: $SELECT
-          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+
 
     - patterns:
 
@@ -129,7 +129,7 @@ rules:
           $QUERY = <... $COPY ...>;
       - metavariable-regex:
           metavariable: $SELECT
-          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+
 
 
     - patterns:
@@ -149,7 +149,7 @@ rules:
       - pattern: $QUERYMETHOD(<... $PAR ...>);
       - metavariable-regex:
           metavariable: $SELECT
-          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+
 
 
     - patterns:
@@ -176,4 +176,4 @@ rules:
           $QUERYMETHOD(<... $COPY ...>);
       - metavariable-regex:
           metavariable: $SELECT
-          regex: (?i)(^["|']{1}select|delete|insert|create|update|alter|drop.*["|']{1})                 
+          regex: (?is)^["']+\s*(select |delete |insert |create |update |alter |drop ).*["']+                 
